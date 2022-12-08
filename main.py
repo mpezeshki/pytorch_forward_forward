@@ -99,7 +99,7 @@ if __name__ == "__main__":
     train_loader, test_loader = MNIST_loaders()
 
     net = Net([784, 500, 500])
-    x, y = iter(train_loader).next()
+    x, y = next(iter(train_loader))
     x, y = x.cuda(), y.cuda()
     x_pos = overlay_y_on_x(x, y)
     rnd = torch.randperm(x.size(0))
@@ -108,7 +108,7 @@ if __name__ == "__main__":
 
     print('train error:', 1.0 - net.predict(x).eq(y).float().mean().item())
 
-    x_te, y_te = iter(test_loader).next()
+    x_te, y_te = next(iter(test_loader))
     x_te, y_te = x_te.cuda(), y_te.cuda()
 
     print('test error:', 1.0 - net.predict(x_te).eq(y_te).float().mean().item())
