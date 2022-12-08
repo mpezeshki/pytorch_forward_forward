@@ -18,13 +18,13 @@ def MNIST_loaders(train_batch_size=50000, test_batch_size=10000):
         MNIST('./data/', train=True,
               download=True,
               transform=transform),
-        batch_size=5000, shuffle=True)
+        batch_size=train_batch_size, shuffle=True)
 
     test_loader = DataLoader(
         MNIST('./data/', train=False,
               download=True,
               transform=transform),
-        batch_size=10000, shuffle=False)
+        batch_size=test_batch_size, shuffle=False)
 
     return train_loader, test_loader
 
