@@ -25,6 +25,6 @@ After training all the layers, to make a prediction for a test image $x$, we fin
 With this implementation, the training and test accuracy on MNIST are:
 ```python
 > python main.py
-train error: 0.06520003080368042
-test error: 0.09890002012252808
+train error: 0.06754004955291748
+test error: 0.06840002536773682
 ```
