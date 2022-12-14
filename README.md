@@ -22,7 +22,7 @@ Negative sample $s' = merge(x, y_{random})$, the image and a random label
 
 After training all the layers, to make a prediction for a test image $x$, we find the pair $s = (x, y)$ for all $0 \leq y < 10$ that maximizes the network's overall activation.
 
-With this implementation, the training and test accuracy on MNIST are:
+With this implementation, the training and test errors on MNIST are:
 ```python
 > python main.py
 train error: 0.06754004955291748
