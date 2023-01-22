@@ -3,10 +3,30 @@ import torch
 import torch.nn as nn
 from tqdm import tqdm
 from torch.optim import Adam
-from torchvision.datasets import MNIST
+from torchvision.datasets import MNIST,FashionMNIST
 from torchvision.transforms import Compose, ToTensor, Normalize, Lambda
 from torch.utils.data import DataLoader
 
+def FashionMNIST_loaders(train_batch_size=50000, test_batch_size=10000):
+
+    transform = Compose([
+        ToTensor(),
+        Normalize((0.1307,), (0.3081,)),
+        Lambda(lambda x: torch.flatten(x))])
+
+    train_loader = DataLoader(
+        FashionMNIST('./data/', train=True,
+              download=True,
+              transform=transform),
+        batch_size=train_batch_size, shuffle=True)
+
+    test_loader = DataLoader(
+        FashionMNIST('./data/', train=False,
+              download=True,
+              transform=transform),
+        batch_size=test_batch_size, shuffle=False)
+
+    return train_loader, test_loader
 
 def MNIST_loaders(train_batch_size=50000, test_batch_size=10000):
 
@@ -108,7 +128,7 @@ def visualize_sample(data, name='', idx=0):
     
 if __name__ == "__main__":
     torch.manual_seed(1234)
-    train_loader, test_loader = MNIST_loaders()
+    train_loader, test_loader = FashionMNIST_loaders()
 
     net = Net([784, 500, 500])
     x, y = next(iter(train_loader))
