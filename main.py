@@ -114,8 +114,10 @@ if __name__ == "__main__":
     x, y = next(iter(train_loader))
     x, y = x.cuda(), y.cuda()
     x_pos = overlay_y_on_x(x, y)
-    rnd = torch.randperm(x.size(0))
-    x_neg = overlay_y_on_x(x, y[rnd])
+    rand_mask = torch.randint(0, 9, y.size()).cuda()
+    y_rnd = (y + rand_mask + 1) % 10
+
+    x_neg = overlay_y_on_x(x, y_rnd)
     
     for data, name in zip([x, x_pos, x_neg], ['orig', 'pos', 'neg']):
         visualize_sample(data, name)
