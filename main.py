@@ -38,6 +38,28 @@ def overlay_y_on_x(x, y):
     x_[range(x.shape[0]), y] = x.max()
     return x_
 
+def get_pos_neg_pairs(x, y):
+    """Replace the first 10 pixels of data [x] with one-hot-encoded label [y]
+    """
+    x_pos = x.clone()
+    x_pos[:, :10] *= 0.0
+    x_pos[range(x.shape[0]), y] = x.max()
+    x_pos = x_pos.repeat_interleave(9, dim=-2)
+
+    # for each pos_x, make 9 neg_x with remain 9 labels
+    x_neg = x.unsqueeze(1).repeat(1, 9, 1)
+    x_neg[:, :, :10] *= 0.0
+    max = x.max()
+    for sample in range(x.shape[0]):
+        n = 0
+        for i in range(10):
+            if i == y[sample].item():
+                continue
+            else:
+                x_neg[sample, n, i] = max
+                n += 1
+    x_neg = x_neg.reshape(-1, 784)
+    return x_pos, x_neg
 
 class Net(torch.nn.Module):
 
@@ -108,15 +130,20 @@ def visualize_sample(data, name='', idx=0):
     
 if __name__ == "__main__":
     torch.manual_seed(1234)
+    net = Net([784, 500, 500])
     train_loader, test_loader = MNIST_loaders()
 
-    net = Net([784, 500, 500])
     x, y = next(iter(train_loader))
     x, y = x.cuda(), y.cuda()
-    x_pos = overlay_y_on_x(x, y)
-    rnd = torch.randperm(x.size(0))
-    x_neg = overlay_y_on_x(x, y[rnd])
-    
+    x_pos, x_neg = get_pos_neg_pairs(x, y)
+
+    # train_loader, test_loader = MNIST_loaders(train_batch_size=5000)
+    # for x, y in train_loader:
+    #     x, y = x.cuda(), y.cuda()
+    #     x_pos, x_neg = get_pos_neg_pairs(x, y)
+    #     net.train(x_pos, x_neg)
+    #     print('train error:', net.predict(x).eq(y).float().mean().item())
+
     for data, name in zip([x, x_pos, x_neg], ['orig', 'pos', 'neg']):
         visualize_sample(data, name)
     
