@@ -7,30 +7,9 @@ from torchvision.datasets import MNIST
 from torchvision.transforms import Compose, ToTensor, Normalize, Lambda
 from torch.utils.data import DataLoader
 
-DEVICE = torch.device('mps')
+DEVICE = torch.device('cuda')
 
-def MNIST_loaders(train_batch_size=50000, test_batch_size=10000):
-
-    transform = Compose([
-        ToTensor(),
-        Normalize((0.1307,), (0.3081,)),
-        Lambda(lambda x: torch.flatten(x))])
-    ## transform处就展平了
-
-    train_loader = DataLoader(
-        MNIST('./data/', train=True,
-              download=True,
-              transform=transform),
-        batch_size=train_batch_size, shuffle=True)
-
-    test_loader = DataLoader(
-        MNIST('./data/', train=False,
-              download=True,
-              transform=transform),
-        batch_size=test_batch_size, shuffle=False)
-
-    return train_loader, test_loader
-
+from dataloaders.datasets import MNIST_loaders
 
 def overlay_y_on_x(x, y):
     """Replace the first 10 pixels of data [x] with one-hot-encoded label [y]
@@ -39,33 +18,6 @@ def overlay_y_on_x(x, y):
     x_[:, :10] *= 0.0
     x_[range(x.shape[0]), y] = x.max()
     return x_
-
-
-class Net(torch.nn.Module):
-
-    def __init__(self, dims):
-        super().__init__()
-        self.layers = []
-        for d in range(len(dims) - 1):
-            self.layers += [Layer(dims[d], dims[d + 1]).to(DEVICE)]
-
-    def predict(self, x):
-        goodness_per_label = []
-        for label in range(10):
-            h = overlay_y_on_x(x, label)
-            goodness = []
-            for layer in self.layers:
-                h = layer(h)
-                goodness += [h.pow(2).mean(1)]
-            goodness_per_label += [sum(goodness).unsqueeze(1)]
-        goodness_per_label = torch.cat(goodness_per_label, 1)
-        return goodness_per_label.argmax(1)
-
-    def train(self, x_pos, x_neg):
-        h_pos, h_neg = x_pos, x_neg
-        for i, layer in enumerate(self.layers):
-            print('training layer', i, '...')
-            h_pos, h_neg = layer.train(h_pos, h_neg)
 
 
 class Layer(nn.Linear):
