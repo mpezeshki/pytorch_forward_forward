@@ -9,6 +9,8 @@ from torch.utils.data import DataLoader
 
 DEVICE = torch.device('cuda')
 
+
+from networks.Model import FFNet
 from dataloaders.datasets import MNIST_loaders
 
 def overlay_y_on_x(x, y):
@@ -64,7 +66,7 @@ if __name__ == "__main__":
     torch.manual_seed(1234)
     train_loader, test_loader = MNIST_loaders()
 
-    net = Net([784, 500, 500])
+    net = FFNet([784, 500, 500])
     x, y = next(iter(train_loader))
     x, y = x.to(DEVICE), y.to(DEVICE)
     x_pos = overlay_y_on_x(x, y)
