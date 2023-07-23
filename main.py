@@ -7,6 +7,7 @@ from torchvision.datasets import MNIST
 from torchvision.transforms import Compose, ToTensor, Normalize, Lambda
 from torch.utils.data import DataLoader
 
+DEVICE = torch.device('mps')
 
 def MNIST_loaders(train_batch_size=50000, test_batch_size=10000):
 
@@ -14,6 +15,7 @@ def MNIST_loaders(train_batch_size=50000, test_batch_size=10000):
         ToTensor(),
         Normalize((0.1307,), (0.3081,)),
         Lambda(lambda x: torch.flatten(x))])
+    ## transform处就展平了
 
     train_loader = DataLoader(
         MNIST('./data/', train=True,
@@ -45,7 +47,7 @@ class Net(torch.nn.Module):
         super().__init__()
         self.layers = []
         for d in range(len(dims) - 1):
-            self.layers += [Layer(dims[d], dims[d + 1]).cuda()]
+            self.layers += [Layer(dims[d], dims[d + 1]).to(DEVICE)]
 
     def predict(self, x):
         goodness_per_label = []
@@ -112,7 +114,7 @@ if __name__ == "__main__":
 
     net = Net([784, 500, 500])
     x, y = next(iter(train_loader))
-    x, y = x.cuda(), y.cuda()
+    x, y = x.to(DEVICE), y.to(DEVICE)
     x_pos = overlay_y_on_x(x, y)
     rnd = torch.randperm(x.size(0))
     x_neg = overlay_y_on_x(x, y[rnd])
@@ -125,6 +127,6 @@ if __name__ == "__main__":
     print('train error:', 1.0 - net.predict(x).eq(y).float().mean().item())
 
     x_te, y_te = next(iter(test_loader))
-    x_te, y_te = x_te.cuda(), y_te.cuda()
+    x_te, y_te = x_te.to(DEVICE), y_te.to(DEVICE)
 
     print('test error:', 1.0 - net.predict(x_te).eq(y_te).float().mean().item())
