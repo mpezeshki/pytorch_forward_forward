@@ -2,7 +2,7 @@
 Author: linjunnuo limchvnno@gmail.com
 Date: 2023-07-23 17:15:37
 LastEditors: linjunnuo limchvnno@gmail.com
-LastEditTime: 2023-07-24 13:50:49
+LastEditTime: 2023-07-24 13:55:11
 FilePath: /pytorch_forward_forward/dataloaders/dataset.py
 Description: 
 
@@ -159,5 +159,3 @@ if __name__ == "__main__":
                 'accuracy = {:.2f}'.format(epoch+1, training_loss, valid_loss, num_correct/num_examples))
 
     train(model, optimizer, nn.CrossEntropyLoss(), train_loader, val_loader, epochs=20, device=device)
-
-    djjks
