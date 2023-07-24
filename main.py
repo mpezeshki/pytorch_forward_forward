@@ -11,7 +11,8 @@ DEVICE = torch.device('cuda')
 
 
 from networks.Model import FFNet
-from dataloaders.datasets import MNIST_loaders
+from dataloaders.dataset import MNIST_loaders
+
 
 def overlay_y_on_x(x, y):
     """Replace the first 10 pixels of data [x] with one-hot-encoded label [y]
