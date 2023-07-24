@@ -81,6 +81,7 @@ class BPNet(torch.nn.Module):
         self.model = nn.Sequential()
         for d in range(len(dims) - 1):
             self.model.append(nn.Linear(dims[d], dims[d + 1]))
+            self.model.append(nn.ReLU())
 
 
     def forward(self, x):

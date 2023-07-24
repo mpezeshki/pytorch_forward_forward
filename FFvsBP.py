@@ -4,16 +4,18 @@ import torch.nn as nn
 from tqdm import tqdm
 from torch.optim import Adam
 from torchvision.datasets import MNIST
-from torchvision.transforms import Compose, ToTensor, Normalize, Lambda
-from torch.utils.data import DataLoader
-import torch.nn.functional as F
-DEVICE = torch.device('cuda')
-EPOCHS = 100
+
+from torch.utils.tensorboard import SummaryWriter
+
 
 from networks.Model import FFNet, BPNet
 from dataloaders.datasets import MNIST_loaders
 from utils import misc
 
+DEVICE = torch.device('cuda')
+EPOCHS = 100
+
+writer = SummaryWriter()
 
 
 
@@ -48,11 +50,11 @@ if __name__ == "__main__":
     x_te, y_te = next(iter(test_loader))
     x_te, y_te = x_te.to(DEVICE), y_te.to(DEVICE)
 
-    print('test error of BP:', 1.0 - net.predict(x_te).eq(y_te).float().mean().item())
+    print('test error of FF:', 1.0 - net.predict(x_te).eq(y_te).float().mean().item())
 
 
     ### BP
-    BPtrain_loader, BPtest_loader = MNIST_loaders(256, 256)
+    BPtrain_loader, BPtest_loader = MNIST_loaders(512, 512)
 
     BP_net = BPNet([784, 500, 10]).to(DEVICE)
     BP_loss = nn.CrossEntropyLoss(reduction='none')
@@ -73,21 +75,25 @@ if __name__ == "__main__":
 
             BP_metric.add(float(loss.sum()), misc.accuracy(y_hat, y), y.numel())
         avg_loss, avg_acc = BP_metric[0] / BP_metric[2], BP_metric[1] / BP_metric[2]
+        writer.add_scalar('BPLoss/train', avg_loss, epoch)
+        writer.add_scalar('BPAccuracy/train', avg_acc, epoch)
         print(f"Epoch {epoch}: loss {avg_loss}, acc {avg_acc}\n")
         if avg_loss <= minloss:
             minloss = avg_loss
         if avg_acc >= bestacc:
             bestacc = avg_acc
 
-    BP_net.eval()
-    testmetric = misc.Accumulator(2)
-    with torch.no_grad():
-        for X, y in BPtest_loader:
-            X = X.to(DEVICE)
-            y = y.to(DEVICE)
-            testmetric.add(misc.accuracy(BP_net(X), y), y.numel())
+        BP_net.eval()
+        testmetric = misc.Accumulator(2)
+        with torch.no_grad():
+            for X, y in BPtest_loader:
+                X = X.to(DEVICE)
+                y = y.to(DEVICE)
+                testmetric.add(misc.accuracy(BP_net(X), y), y.numel())
 
-    testacc = testmetric[0] / testmetric[1]
+        testacc = testmetric[0] / testmetric[1]
+        writer.add_scalar('BPAccuracy/test', testacc, epoch)
+
 
     print(f"BP trainacc:{bestacc} \n BP trainloss:{minloss}")
     print(f"BP testacc:{testacc}\n")
