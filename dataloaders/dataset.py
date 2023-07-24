@@ -2,6 +2,16 @@
 Author: linjunnuo limchvnno@gmail.com
 Date: 2023-07-23 17:15:37
 LastEditors: linjunnuo limchvnno@gmail.com
+LastEditTime: 2023-07-24 15:49:01
+FilePath: /pytorch_forward_forward/dataloaders/dataset.py
+Description: 
+
+Copyright (c) 2023 by linjunnuo , All Rights Reserved. 
+'''
+'''
+Author: linjunnuo limchvnno@gmail.com
+Date: 2023-07-23 17:15:37
+LastEditors: linjunnuo limchvnno@gmail.com
 LastEditTime: 2023-07-24 13:55:11
 FilePath: /pytorch_forward_forward/dataloaders/dataset.py
 Description: 
@@ -10,34 +20,17 @@ Copyright (c) 2023 by linjunnuo , All Rights Reserved.
 '''
 from torchvision.datasets import MNIST
 from torchvision.transforms import Compose, ToTensor, Normalize, Lambda
-from torch.utils.data import DataLoader, Dataset
-from pathlib import Path
+from torch.utils.data import DataLoader
+import sys
+import os
+sys.path.append(os.path.dirname(sys.path[0]))
+import utils.misc as misc
 import pandas as pd
 import torch.nn as nn
 import torch.nn.functional as F
 import torch
 import torch.optim as optim
 
-
-class DataGenerator(Dataset):
-    def __init__(self, path, kind='train'):
-        if kind=='train':
-            files = Path(path).glob('[1-3]-*')
-        if kind=='val':
-            files = Path(path).glob('4-*')
-        if kind=='test':
-            files = Path(path).glob('5-*')
-        
-        self.items = [(str(file), file.name.split('-')[-1].replace('.wav', '')) for file in files]
-        self.length = len(self.items)
-        
-    def __getitem__(self, index):
-        filename, label = self.items[index]
-        data_tensor, rate = torchaudio.load(filename)
-        return (data_tensor, int(label))
-    
-    def __len__(self):
-        return self.length
 
 # ---------------------------------------------------------------------------- #
 #                             Dataloader Generation                            #
@@ -70,9 +63,9 @@ def ESC50_loaders(path='./data/ESC50/', batch_size = 64):
     path_audio = path+'audio/audio/'
     data = pd.read_csv(path+'esc50.csv')
     
-    train_data = DataGenerator(path_audio, kind='train')
-    val_data = DataGenerator(path_audio, kind='val')
-    test_data = DataGenerator(path_audio, kind='test')
+    train_data = misc.DataGenerator(path_audio, kind='train')
+    val_data = misc.DataGenerator(path_audio, kind='val')
+    test_data = misc.DataGenerator(path_audio, kind='test')
     
     # ------------------------------- 制作dataloader ------------------------------- #
     train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
@@ -82,6 +75,8 @@ def ESC50_loaders(path='./data/ESC50/', batch_size = 64):
 
 
 if __name__ == "__main__":
+    
+
     train_loader, test_loader,val_loader = ESC50_loaders()
     
     class SimpleCnn(nn.Module):
@@ -90,16 +85,16 @@ if __name__ == "__main__":
             self.conv1 = nn.Conv1d(100, 128, kernel_size=5, stride=4)
             self.bn1 = nn.BatchNorm1d(128)
             self.pool1 = nn.MaxPool1d(4)
-            self.conv2 = nn.Conv1d(128, 128, 3)
-            self.bn2 = nn.BatchNorm1d(128)
+            self.conv2 = nn.Conv1d(128, 256, 3)
+            self.bn2 = nn.BatchNorm1d(256)
             self.pool2 = nn.MaxPool1d(4)
-            self.conv3 = nn.Conv1d(128, 256, 3)
-            self.bn3 = nn.BatchNorm1d(256)
+            self.conv3 = nn.Conv1d(256, 512, 3)
+            self.bn3 = nn.BatchNorm1d(512)
             self.pool3 = nn.MaxPool1d(4)
-            self.conv4 = nn.Conv1d(256, 512, 3)
-            self.bn4 = nn.BatchNorm1d(512)
+            self.conv4 = nn.Conv1d(512, 256, 3)
+            self.bn4 = nn.BatchNorm1d(256)
             self.pool4 = nn.MaxPool1d(4)
-            self.fc1 = nn.Linear(512, 50)
+            self.fc1 = nn.Linear(256, 50)
             
         def forward(self, x):
             x = x.unsqueeze(-1).view(-1, 100, 2205)
@@ -118,6 +113,7 @@ if __name__ == "__main__":
             x = x.squeeze(-1)
             x = self.fc1(x)
             return x
+    
     
     device = torch.device('cuda:2')
     model = SimpleCnn()
@@ -158,4 +154,4 @@ if __name__ == "__main__":
             print('Epoch: {}, Training Loss: {:.2f}, Validation Loss: {:.2f}, '
                 'accuracy = {:.2f}'.format(epoch+1, training_loss, valid_loss, num_correct/num_examples))
 
-    train(model, optimizer, nn.CrossEntropyLoss(), train_loader, val_loader, epochs=20, device=device)
+    train(model, optimizer, nn.CrossEntropyLoss(), train_loader, val_loader, epochs=30, device=device)

@@ -1,3 +1,8 @@
+from pathlib import Path
+from torch.utils.data import DataLoader, Dataset
+
+import torchaudio
+
 def overlay_y_on_x(x, y):
     """Replace the first 10 pixels of data [x] with one-hot-encoded label [y]
     """
@@ -37,3 +42,25 @@ def accuracy(y_hat, y):  # @save
 
     cmp = y_hat.type(y.dtype) == y
     return float(cmp.type(y.dtype).sum())
+
+
+class DataGenerator(Dataset):
+ 
+    def __init__(self, path, kind='train'):
+        if kind=='train':
+            files = Path(path).glob('[1-3]-*')
+        if kind=='val':
+            files = Path(path).glob('4-*')
+        if kind=='test':
+            files = Path(path).glob('5-*')
+        
+        self.items = [(str(file), file.name.split('-')[-1].replace('.wav', '')) for file in files]
+        self.length = len(self.items)
+        
+    def __getitem__(self, index):
+        filename, label = self.items[index]
+        data_tensor, rate = torchaudio.load(filename)
+        return (data_tensor, int(label))
+    
+    def __len__(self):
+        return self.length
