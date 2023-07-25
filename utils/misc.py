@@ -52,7 +52,7 @@ class DataGenerator(Dataset):
         if kind=='val':
             files = Path(path).glob('4-*')
         if kind=='test':
-            files = Path(path).glob('5-*')
+            files = Path(path).glob('[4-5]-*')
         
         self.items = [(str(file), file.name.split('-')[-1].replace('.wav', '')) for file in files]
         self.length = len(self.items)
@@ -64,3 +64,4 @@ class DataGenerator(Dataset):
     
     def __len__(self):
         return self.length
+    
