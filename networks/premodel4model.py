@@ -2,7 +2,7 @@
 Author: linjunnuo limchvnno@gmail.com
 Date: 2023-07-25 10:17:07
 LastEditors: linjunnuo limchvnno@gmail.com
-LastEditTime: 2023-07-25 10:20:59
+LastEditTime: 2023-07-25 17:08:44
 FilePath: /pytorch_forward_forward/networks/premodel4model.py
 Description: 
 
@@ -79,14 +79,6 @@ def MSC_premodel():
         
         # Print training and validation loss
         print(f'Epoch [{epoch + 1}/{num_epochs}], Train Loss: {train_loss:.4f}, Valid Loss: {valid_loss:.4f}')
-    test_transforms = transforms.Compose([
-        transforms.Resize((224,224)),
-        transforms.ToTensor(),
-        transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])
-    ])
-
-    test_data = datasets.ImageFolder(test_dir, transform=test_transforms)
-    test_loader = DataLoader(test_data, batch_size=32, shuffle=True)
 
 
     model.eval()
