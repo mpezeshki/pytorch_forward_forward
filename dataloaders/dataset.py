@@ -73,7 +73,7 @@ def ESC50_loaders(path='./data/ESC50/', batch_size = 64):
     return train_loader, test_loader
 
 
-def MSD_loader(path='./data/MSD/', batch_size = 64):
+def MSD_loaders(path='./data/MSD/', batch_size = 64):
     '''
     description: 生成MSD的dataloader, 一共6类
     return: 

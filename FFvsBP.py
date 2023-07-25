@@ -11,7 +11,7 @@ DEVICE = torch.device('cuda')
 EPOCHS = 100
 
 from networks.Model import FFNet, BPNet
-from dataloaders.datasets import MNIST_loaders
+from dataloaders.dataset import MNIST_loaders
 from utils import misc
 
 
