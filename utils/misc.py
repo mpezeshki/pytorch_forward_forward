@@ -1,6 +1,16 @@
+'''
+Author: linjunnuo limchvnno@gmail.com
+Date: 2023-07-24 13:22:11
+LastEditors: linjunnuo limchvnno@gmail.com
+LastEditTime: 2023-07-27 19:46:32
+FilePath: /pytorch_forward_forward/utils/misc.py
+Description: 
+
+Copyright (c) 2023 by linjunnuo , All Rights Reserved. 
+'''
 from pathlib import Path
 from torch.utils.data import DataLoader, Dataset
-
+import matplotlib.pyplot as plt
 import torchaudio
 
 def overlay_y_on_x(x, y):
@@ -65,3 +75,9 @@ class DataGenerator(Dataset):
     def __len__(self):
         return self.length
     
+def visualize_sample(data, name='', idx=0):
+    reshaped = data[idx].cpu().reshape(28, 28)
+    plt.figure(figsize = (4, 4))
+    plt.title(name)
+    plt.imshow(reshaped, cmap="gray")
+    plt.show()

@@ -32,7 +32,7 @@ if __name__ == "__main__":
     train_loader, test_loader = MNIST_loaders()
 
     net = FFNet([784, 500, 500]).to(DEVICE)
-    x, y = next(iter(train_loader))
+    x, y = next(iter(train_loader[0])) #我加了数据集分割，所以x是个列表，需要索引。
     x, y = x.to(DEVICE), y.to(DEVICE)
     x_pos = misc.overlay_y_on_x(x, y)
     rnd = torch.randperm(x.size(0))
