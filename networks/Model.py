@@ -9,7 +9,7 @@ from torchvision.transforms import Compose, ToTensor, Normalize, Lambda
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from collections import OrderedDict
-from tqdm import tqdm
+from tqdm import trange
 
 from utils.misc import overlay_y_on_x
 
@@ -32,7 +32,8 @@ class Layer(nn.Linear):
             self.bias.unsqueeze(0))
 
     def train(self, x_pos, x_neg):
-        for i in tqdm(range(self.num_epochs)):
+        # for i in tqdm(range(self.num_epochs)):
+        for i in trange(self.num_epochs):
             g_pos = self.forward(x_pos).pow(2).mean(1)
             g_neg = self.forward(x_neg).pow(2).mean(1)
             # The following loss pushes pos (neg) samples to
