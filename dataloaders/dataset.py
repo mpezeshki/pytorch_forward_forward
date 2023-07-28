@@ -2,7 +2,7 @@
 Author: linjunnuo limchvnno@gmail.com
 Date: 2023-07-23 17:15:37
 LastEditors: linjunnuo limchvnno@gmail.com
-LastEditTime: 2023-07-25 17:04:50
+LastEditTime: 2023-07-28 10:54:50
 FilePath: /pytorch_forward_forward/dataloaders/dataset.py
 Description: 
 
@@ -33,7 +33,7 @@ import torch
 # ---------------------------------------------------------------------------- #
 #                                 ESC50_loaders                                #
 # ---------------------------------------------------------------------------- #
-def ESC50_loaders(path='./data/ESC50/', batch_size=64, num_subsets=1):
+def ESC50_loaders(path='/home/datasets/SNN/data/ESC50/', batch_size=64, num_subsets=1):
     '''
     num_subsets：训练集划分数量
     description: 用于生成ESC-50的train_loader, test_loader。每个音频样本的有220500点，一共50类
@@ -68,7 +68,7 @@ def ESC50_loaders(path='./data/ESC50/', batch_size=64, num_subsets=1):
 # ---------------------------------------------------------------------------- #
 #                                      MSD                                     #
 # ---------------------------------------------------------------------------- #
-def MSD_loaders(path='./data/MSD/', batch_size=64, num_subsets=1):
+def MSD_loaders(path='/home/datasets/SNN/data/MSD/', batch_size=64, num_subsets=1):
     '''
     num_subsets：训练集划分数量
     description: 生成MSD的dataloader, 一共6类
@@ -146,8 +146,8 @@ def MNIST_loaders(batch_size=50000, num_subsets=1):
         Normalize((0.1307,), (0.3081,)),
         Lambda(lambda x: torch.flatten(x))])
 
-    train_dataset = MNIST('./data/', train=True, download=False, transform=transform)
-    test_dataset = MNIST('./data/', train=False, download=False, transform=transform)
+    train_dataset = MNIST('/home/datasets/SNN/data/', train=True, download=False, transform=transform)
+    test_dataset = MNIST('/home/datasets/SNN/data/', train=False, download=False, transform=transform)
 
     # Calculate the size of each subset
     subset_size = len(train_dataset) // num_subsets
