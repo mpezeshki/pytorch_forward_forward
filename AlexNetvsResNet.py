@@ -38,7 +38,7 @@ def FF_experiment():
    
     FF_start_time = tqdm(time.time())
     train_acc = [] 
-    for i, (x, y) in enumerate(train_loader[0]):
+    for i, (x, y) in enumerate(tjjjj[0]):
     
         x, y = x.to(DEVICE), y.to(DEVICE)
         x_pos = misc.overlay_y_on_x(x, y)
