@@ -9,7 +9,7 @@ from torch.utils.tensorboard import SummaryWriter
 
 
 from networks.Model import FFNet, BPNet
-from dataloaders.datasets import MNIST_loaders
+from dataloaders.dataset import MNIST_loaders
 from utils import misc
 
 DEVICE = torch.device('cuda')
@@ -36,17 +36,17 @@ def FF_experiment():
     net = FFNet([784, 500, 500]).to(DEVICE)
     
    
-    FF_start_time = time.time()
+    FF_start_time = tqdm(time.time())
     train_acc = [] 
-    for i, (x, y) in enumerate(train_loader):
+    for i, (x, y) in enumerate(train_loader[0]):
     
         x, y = x.to(DEVICE), y.to(DEVICE)
         x_pos = misc.overlay_y_on_x(x, y)
         rnd = torch.randperm(x.size(0))
         x_neg = misc.overlay_y_on_x(x, y[rnd])
     
-        # for data, name in zip([x, x_pos, x_neg], ['orig', 'pos', 'neg']):
-        #     visualize_sample(data, name)
+        for data, name in zip([x, x_pos, x_neg], ['orig', 'pos', 'neg']):
+            visualize_sample(data, name)
     
         net.train(x_pos, x_neg)
         train_acc.append(net.predict(x).eq(y).float().mean().item())
