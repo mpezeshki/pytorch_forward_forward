@@ -1,3 +1,13 @@
+'''
+Author: linjunnuo limchvnno@gmail.com
+Date: 2023-07-24 13:22:11
+LastEditors: linjunnuo limchvnno@gmail.com
+LastEditTime: 2023-07-28 09:58:03
+FilePath: /pytorch_forward_forward/FFvsBP.py
+Description: 
+
+Copyright (c) 2023 by linjunnuo , All Rights Reserved. 
+'''
 import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
@@ -32,7 +42,7 @@ if __name__ == "__main__":
     train_loader, test_loader = MNIST_loaders()
 
     net = FFNet([784, 500, 500]).to(DEVICE)
-    x, y = next(iter(train_loader[0])) #我加了数据集分割，所以x是个列表，需要索引。
+    x, y = next(iter(train_loader[0])
     x, y = x.to(DEVICE), y.to(DEVICE)
     x_pos = misc.overlay_y_on_x(x, y)
     rnd = torch.randperm(x.size(0))
