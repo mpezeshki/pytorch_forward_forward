@@ -109,7 +109,7 @@ class ConvLayer(nn.Conv2d):
         self.relu = torch.nn.ReLU()
         self.opt = Adam(self.parameters(), lr=0.03)
         self.threshold = 2.0
-        self.num_epochs = 50000 
+        self.num_epochs = 10000 
     
     def train(self, x_pos, x_neg):
         for i in tqdm(range(self.num_epochs)):
