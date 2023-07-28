@@ -170,8 +170,9 @@ class FFAlexNet(torch.nn.Module):
 class FFNet_shallow(torch.nn.Module):
     '''
     description: 浅层模型
-    param {*} self
-    param {*} x
+    param {*} h_pos, h_neg: 浅层模型最后输出的一层特征,直接输入给深层网络
+    param {*} result: _out浅层模型最后输出的一层特征,直接输入给深层网络
+               goodness_per_label:浅层模型的预测精度     
     return {*}
     '''
     def __init__(self, dims):
