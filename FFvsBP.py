@@ -73,7 +73,7 @@ def FF_experiment():
 
 
 def BP_experiment():
-    BPtrain_loader, BPtest_loader = MNIST_loaders(512, 512)
+    BPtrain_loader, BPtest_loader = MNIST_loaders(512)
 
     BP_net = BPNet([784, 500, 10]).to(DEVICE)
     BP_loss = nn.CrossEntropyLoss(reduction='none')
@@ -84,7 +84,7 @@ def BP_experiment():
     for epoch in range(config['epoch']):
         BP_start_time = time.time()
         BP_metric = misc.Accumulator(3)
-        for x, y in tqdm(BPtrain_loader):
+        for x, y in tqdm(BPtrain_loader[0]):
             if isinstance(BP_net, torch.nn.Module):
                 BP_net.train()
             x, y = x.to(DEVICE), y.to(DEVICE)
@@ -129,9 +129,9 @@ def BP_experiment():
 if __name__ == "__main__":
     torch.manual_seed(1234)
 
-    FF_experiment()
+    # FF_experiment()
 
     # BP
-    # BP_experiment()
+    BP_experiment()
 
     print(f"Done")

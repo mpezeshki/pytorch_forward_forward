@@ -4,15 +4,12 @@ import torch.nn as nn
 from torch.nn.common_types import _size_2_t
 from torch.optim import Adam
 from torchvision import models
-from torchvision.datasets import MNIST
 from torchvision.transforms import Compose, ToTensor, Normalize, Lambda
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from collections import OrderedDict
 from tqdm import trange
-
 from utils.misc import overlay_y_on_x
-
 DEVICE = torch.device('cuda')
 writer = SummaryWriter(comment=f"FFLayer")
 
@@ -79,7 +76,6 @@ class FFNet(torch.nn.Module):
             print('training layer', i, '...')
             h_pos, h_neg = layer.train(h_pos, h_neg)
 
-
 class BPNet(torch.nn.Module):
     def __init__(self, dims):
         super().__init__()
@@ -128,8 +124,6 @@ class ConvLayer(nn.Conv2d):
             loss.backward()
             self.opt.step()
         return self.forward(x_pos).detach(), self.forward(x_neg).detach()
-        
-
 
 class FFAlexNet(torch.nn.Module):
     def __init__(self, dims, *args, **kwargs) -> None:
@@ -236,3 +230,25 @@ class FFNet_deep(torch.nn.Module):
             print('training layer in deep', i, '...')
             h_pos, h_neg = layer.train(h_pos, h_neg)
 
+class BPNet_split(torch.nn.Module):
+    '''
+    description: 
+    param {*} self
+    param {*} dims
+    return {*}
+    '''    
+    def __init__(self, dims):
+        super().__init__()
+        self.shallow_model = nn.Sequential(
+            nn.Linear(dims[0], dims[1]),
+            nn.ReLU()
+        )
+        self.deep_model = nn.Sequential()
+        for d in range(1, len(dims) - 1):
+            self.deep_model.append(nn.Linear(dims[d], dims[d + 1]))
+            self.deep_model.append(nn.ReLU())
+
+    def forward(self, x):
+        shallow_output = self.shallow_model(x)
+        deep_output = self.deep_model(shallow_output)
+        return deep_output
