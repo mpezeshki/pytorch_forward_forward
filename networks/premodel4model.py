@@ -1,4 +1,5 @@
-
+import torch
+from dataloaders.dataset import MSD_loaders
 import torch.nn as nn
 from torchsummary import summary
 from torchvision import models
@@ -10,7 +11,7 @@ def MSC_premodel():
     description: 用于MSC的模型
 
     '''    
-    train_loader, valid_loader = MSD_loader()
+    train_loader, test_loader = MSD_loaders()
     device = torch.device("cuda:2")
     model = models.resnet50(pretrained = True).to(device)
     summary(model, (3, 224, 224))
