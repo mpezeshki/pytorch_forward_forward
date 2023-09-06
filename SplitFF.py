@@ -1,14 +1,3 @@
-'''
-Author: linjunnuo limchvnno@gmail.com
-Date: 2023-07-27 16:43:08
-LastEditors: linjunnuo limchvnno@gmail.com
-LastEditTime: 2023-07-28 20:56:16
-FilePath: /pytorch_forward_forward/SplitFF.py
-Description: 
-
-Copyright (c) 2023 by linjunnuo , All Rights Reserved. 
-'''
-
 import torch
 import time
 from networks.Model import FFNet_shallow, FFNet_deep

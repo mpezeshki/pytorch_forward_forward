@@ -1,13 +1,4 @@
-'''
-Author: linjunnuo limchvnno@gmail.com
-Date: 2023-07-25 10:17:07
-LastEditors: linjunnuo limchvnno@gmail.com
-LastEditTime: 2023-07-25 17:08:44
-FilePath: /pytorch_forward_forward/networks/premodel4model.py
-Description: 
 
-Copyright (c) 2023 by linjunnuo , All Rights Reserved. 
-'''
 import torch.nn as nn
 from torchsummary import summary
 from torchvision import models

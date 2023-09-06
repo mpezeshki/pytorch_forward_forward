@@ -1,13 +1,4 @@
-'''
-Author: linjunnuo limchvnno@gmail.com
-Date: 2023-07-29 08:01:46
-LastEditors: linjunnuo limchvnno@gmail.com
-LastEditTime: 2023-07-29 10:50:49
-FilePath: /pytorch_forward_forward/SplitBP.py
-Description: 
 
-Copyright (c) 2023 by linjunnuo , All Rights Reserved. 
-'''
 import torch
 import torch.nn as nn
 from tqdm import tqdm

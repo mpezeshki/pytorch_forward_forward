@@ -130,11 +130,7 @@ def BP_experiment():
 if __name__ == "__main__":
     torch.manual_seed(1234)
 
-<<<<<<< HEAD
     # FF_experiment()
-=======
-    #FF_experiment()
->>>>>>> ec2efd22a080b579783e7305356e8a746778e2f7
 
     # BP
     BP_experiment()
