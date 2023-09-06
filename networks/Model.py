@@ -324,7 +324,7 @@ class BPNet_split(torch.nn.Module):
         deep_output = self.deep_model(shallow_output)
         return deep_output
     
-    class FFNet_shallow(torch.nn.Module):
+class FFNet_shallow(torch.nn.Module):
     '''
     description: 浅层模型
     param {*} h_pos, h_neg: 浅层模型最后输出的一层特征,直接输入给深层网络
