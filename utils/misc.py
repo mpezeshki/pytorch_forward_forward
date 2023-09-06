@@ -12,6 +12,8 @@ from pathlib import Path
 from torch.utils.data import DataLoader, Dataset
 import matplotlib.pyplot as plt
 import torchaudio
+import torch
+from collections.abc import Iterable
 
 def overlay_y_on_x(x, y):
     """Replace the first 10 pixels of data [x] with one-hot-encoded label [y]
@@ -25,7 +27,43 @@ def overlay_y_on_x(x, y):
     x_[range(x.shape[0]), y] = x.max()
     return x_
 
+def Conv_overlay_y_on_x(x, y):
+    """
+    Replace the first 10 pixels of image data [x] with one-hot-encoded label [y]
+    """
+    
+    # 复制 x 以保持输入不变
+    x_ = x.clone()
+    
+    if isinstance(y, Iterable):
+    
+        for i,j in zip(x_, y):
+            i[0,0,:10] =0
+            i[0,0, j] = x_.max()
+    else:
+        for i in x_:
+            i[0,0,:10] =0
+            i[0,0, y] = x_.max() 
+          
+    return x_
 
+def create_hybrid_image(image1, image2):
+    # Create a mask with large regions of ones and zeros
+    mask = np.zeros_like(image1)
+    mask[10:18, 10:18] = 1
+    mask[20:25, 20:25] = 1
+
+    # Blur the mask with a filter of the form [1/4, 1/2, 1/4] in both directions
+    filter = np.array([1/4, 1/2, 1/4])
+    for i in range(10):
+        mask = convolve(mask, filter[np.newaxis, :],
+                        mode='constant')  # Note the np.newaxis
+        mask[mask < 0.5] = 0
+        mask[mask >= 0.5] = 1
+
+    # Create hybrid images for negative data
+    negative_data = image1 * mask + image2 * (1 - mask)
+    return negative_data
 
 class Accumulator:
     """在n个变量上累加"""
@@ -85,3 +123,36 @@ def visualize_sample(data, name='', idx=0):
     plt.title(name)
     plt.imshow(reshaped, cmap="gray")
     plt.show()
+    
+def visualize_negative(data, name='', idx=0):
+    reshaped = data.reshape(28, 28)
+    plt.figure(figsize = (4, 4))
+    plt.title(name)
+    plt.imshow(reshaped, cmap="gray")
+    plt.show()
+
+    
+if __name__ == "__main__":
+    import numpy as np
+    from scipy.ndimage import convolve
+
+    # Create a random bit image
+    random_image = np.random.randint(0, 2, size=(28, 28))
+    visualize_negative(random_image)
+    # Create a mask with large regions of ones and zeros
+    mask = np.zeros_like(random_image)
+    mask[10:18, 10:18] = 1
+    mask[20:25, 20:25] = 1
+
+    # Blur the mask with a filter of the form [1/4, 1/2, 1/4] in both directions
+    filter = np.array([1/4, 1/2, 1/4])
+    for i in range(10):
+        mask = convolve(mask, filter[np.newaxis, :],
+                        mode='constant')  # Note the np.newaxis
+        mask[mask < 0.5] = 0
+        mask[mask >= 0.5] = 1
+
+    # Create hybrid images for negative data
+    digit1 = np.random.randint(0, 10, size=(28, 28))
+    digit2 = np.random.randint(0, 10, size=(28, 28))
+ 

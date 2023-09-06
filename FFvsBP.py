@@ -9,10 +9,10 @@ from torch.utils.tensorboard import SummaryWriter
 
 
 from networks.Model import FFNet, BPNet
-from dataloaders.dataset import MNIST_loaders
+from dataloaders.dataset import MNIST_loaders, debug_loaders
 from utils import misc
 
-DEVICE = torch.device('cuda')
+DEVICE = torch.device('cuda:2')
 config = {
     'lr': 0.001,
     'epoch': 50,
@@ -47,7 +47,7 @@ def FF_experiment():
         # for data, name in zip([x, x_pos, x_neg], ['orig', 'pos', 'neg']):
         #     visualize_sample(data, name)
 
-        net.train(x_pos, x_neg)
+        net.ftrain(x_pos, x_neg)
         train_acc.append(net.predict(x).eq(y).float().mean().item())
         break
 
@@ -119,6 +119,7 @@ def BP_experiment():
 
         testacc = testmetric[0] / testmetric[1]
         writer.add_scalar('BPAccuracy/test', testacc, epoch)
+        print(f"Epoch {epoch}: test acc: {testacc}\n")
 
     writer.add_scalar('Time/BPtime', sum(journeylist))
 
@@ -129,7 +130,11 @@ def BP_experiment():
 if __name__ == "__main__":
     torch.manual_seed(1234)
 
+<<<<<<< HEAD
     # FF_experiment()
+=======
+    #FF_experiment()
+>>>>>>> ec2efd22a080b579783e7305356e8a746778e2f7
 
     # BP
     BP_experiment()

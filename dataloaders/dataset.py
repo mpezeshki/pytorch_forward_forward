@@ -135,16 +135,17 @@ def MSD_loaders(path='/home/datasets/SNN/MSD/', batch_size=64, num_subsets=1):
 #                                     MNIST                                    #
 # ---------------------------------------------------------------------------- #
 
-def MNIST_loaders(batch_size=50000, num_subsets=1):
+def MNIST_loaders(batch_size=50000, num_subsets=1, transform=None):
     '''
     num_subsets：训练集划分数量
     description: 输入batch_size和需要划分的数量
     return {*}
-    '''    
-    transform = Compose([
-        ToTensor(),
-        Normalize((0.1307,), (0.3081,)),
-        Lambda(lambda x: torch.flatten(x))])
+    ''' 
+    if transform is None:  
+        transform = Compose([
+            ToTensor(),
+            Normalize((0.1307,), (0.3081,)),
+            Lambda(lambda x: torch.flatten(x))])
 
     train_dataset = MNIST('/home/datasets/SNN/', train=True, download=False, transform=transform)
     test_dataset = MNIST('/home/datasets/SNN/', train=False, download=False, transform=transform)
@@ -162,10 +163,31 @@ def MNIST_loaders(batch_size=50000, num_subsets=1):
         subset = Subset(train_dataset, list(range(start_idx, end_idx)))
 
         # Create a DataLoader for each subset
-        train_loader = DataLoader(subset, batch_size=batch_size, shuffle=True)
+        train_loader = DataLoader(subset, batch_size=batch_size, shuffle=True, drop_last=True)
         train_loaders.append(train_loader)
 
-    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, drop_last=True)
 
     return train_loaders, test_loader
 
+def debug_loaders(train_batch_size=50000, test_batch_size=10000):
+
+    transform = Compose([
+        ToTensor(),
+        Normalize((0.1307,), (0.3081,)),
+        Lambda(lambda x: torch.flatten(x))])
+    ## transform处就展平了
+
+    train_loader = DataLoader(
+        MNIST('./data/', train=True,
+              download=True,
+              transform=transform),
+        batch_size=train_batch_size, shuffle=True)
+
+    test_loader = DataLoader(
+        MNIST('./data/', train=False,
+              download=True,
+              transform=transform),
+        batch_size=test_batch_size, shuffle=False)
+
+    return train_loader, test_loader
